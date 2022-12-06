@@ -17,3 +17,10 @@ def get_start_kb() -> ReplyKeyboardMarkup:
     ], resize_keyboard=True)
 
     return kb
+
+def get_cancel_kb() -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(keyboard=[
+        [InlineKeyboardButton('/cancel')]
+    ], resize_keyboard=True)
+
+    return kb
