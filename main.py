@@ -36,7 +36,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
         reply_markup=get_cancel_kb())           
 
 
-@dp.message_handler(commands=['members'])
+@dp.message_handler(commands=['account'])
 async def process_start_command(message: types.Message):
     await message.answer(text='Личный кабинет',reply_markup=get_start_ikb())
 
