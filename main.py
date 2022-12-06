@@ -3,42 +3,39 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher , FSMContext
 from aiogram.utils import executor
 from aiogram.dispatcher.filters.state import StatesGroup, State
-
-
+from keyboards import get_start_ikb, members_cb
 from config import TOKEN
-from db import *
+import db 
 
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot,storage=storage)
-
 class User_States(StatesGroup):
 
     name = State()
 
+async def on_startup(_):
+    await db.db_connect()
+    print('Подключение к БД выполнено')
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    await message.reply("Привет!\nНапиши мне что-нибудь!")
+    await message.answer('Добро пожаловать!',reply_markup=get_start_ikb())
 
+@dp.callback_query_handler(text='get_all_members')
+async def cb_get_all_embers(callback: types.CallbackQuery) -> None:
+    members = await db.get_all_members()
 
-@dp.message_handler(commands=['help'])
-async def process_help_command(message: types.Message):
-    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!")
+    if not members:
+        await callback.message.answer('Нет нихуя')
+        return await callback.answer()
 
-
-@dp.message_handler()
-async def echo_message(msg: types.Message):
-    await bot.send_message(msg.from_user.id, msg.text)
-
-
-@dp.callback_query_handler(text='register_to_tournament')
+@dp.callback_query_handler(text='add_new_member')
 async def cb_reg_new_user(callback: types.CallbackQuery) -> None:
     await callback.message.delete()
     await callback.message.answer('Напиши Имя.')
 
     await User_States.name.set()
-
 
 dp.message_handler(state=User_States.name)
 async def handle_name(message: types.Message, state: FSMContext) -> None:
@@ -46,9 +43,9 @@ async def handle_name(message: types.Message, state: FSMContext) -> None:
         data['name'] = message.text
 
     await message.reply("А теперь напиши логин.")
-    await User_States.lname()
-
-
+    await User_States.name()
 
 if __name__ == '__main__':
-    executor.start_polling(dp)
+    executor.start_polling(dp, 
+                           skip_updates=True,
+                           on_startup=on_startup)

@@ -1,18 +1,24 @@
-import sqlite3 as sq
+import sqlite3 
 
 async def db_connect() -> None:
     global db, cur
 
-    db= sq.connect("tournament.db")
+    db = sqlite3.connect("tournament.db")
     cur = db.cursor()
 
-    cur.execute("CREATE TABLE IF NOT EXIST tournament(user TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS tournament(user, TEXT)")
 
     db.commit()
 
-async def register_to_tournament(user,name):
+async def get_all_members():
 
-    regUser = cur.execute("INSERT INTO tournament (?,)", (user,))
+    members = cur.execute("SELECT * FROM tournament").fetchall()
+
+    return members
+
+async def register_to_tournament(user):
+
+    regUser = cur.execute("INSERT INTO tournament (?)", (user,))
     db.commit()
 
     return regUser
