@@ -18,7 +18,7 @@ async def get_all_members():
 
 async def register_to_tournament(user):
 
-    regUser = cur.execute("INSERT INTO tournament (?)", (user,))
+    regUser = cur.execute("INSERT INTO tournament (?)", (name))
     db.commit()
 
     return regUser

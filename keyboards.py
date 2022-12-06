@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup,ReplyKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
 
 members_cb = CallbackData('user','id','action')
@@ -10,3 +10,10 @@ def get_start_ikb() -> InlineKeyboardMarkup:
         ])
 
     return ikb
+
+def get_start_kb() -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(keyboard=[
+        [InlineKeyboardButton('/account')]
+    ], resize_keyboard=True)
+
+    return kb
