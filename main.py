@@ -19,12 +19,22 @@ async def on_startup(_):
     await db.db_connect()
     print('Подключение к БД выполнено')
 
-
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     await bot.send_message(chat_id=message.from_user.id,
-                            text='Добро пожаловать',
+                            text="""Добро пожаловать ! \nДля регистрации нажми на /account и выбери <b>"Регистрация на турнир"</b>.\nДля просмотра списка участников выбери <b>"Просмотр участников"</b>.\nЕсли вам нужна инструкция по подключению нажми на /connect.\nТак же можно поддержать нас <b>донатом</b> /donate""", parse_mode="html",
                             reply_markup=get_start_kb())
+
+
+@dp.message_handler(commands=['connect'])
+async def cmd_connenct(message: types.Message):
+    await bot.send_message(chat_id=message.from_user.id,
+                            text='Для начала тебе необходимо скачать клиент по ссылке https://clck.ru/32v9fV , и следую инструкциям подключится к серверу (инструкциии) ')
+
+@dp.message_handler(commands=['donate'])
+async def cmd_donate(message: types.Message):
+    await bot.send_message(chat_id=message.from_user.id,
+                            text='Донат вы можете отправить на карту : \n<b>2200 7001 3485 8215 (Tinkoff)</b> \nОбязательно в коментарии указывайте на что вы отпарвили донат - автору или в призовой фонд .', parse_mode="html")
 
 @dp.message_handler(commands=['cancel'], state='*')
 async def cmd_cancel(message: types.Message, state: FSMContext):
@@ -32,9 +42,8 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
         return
 
     await state.finish()
-    await message.answer('Зассал...',
+    await message.answer('Регистрация отменена',
         reply_markup=get_cancel_kb())           
-
 
 @dp.message_handler(commands=['account'])
 async def process_start_command(message: types.Message):
@@ -43,11 +52,16 @@ async def process_start_command(message: types.Message):
 @dp.callback_query_handler(text='get_all_members')
 async def cb_get_all_members(callback: types.CallbackQuery) -> None:
     members = await db.get_all_members()
+    howmany = len(members)
+    howmany = str(howmany)
+    members = str(members)
+    members = members.strip('[]').replace('(',' ').replace("'",'-|')
+    members = members.replace(')','\n').replace(',',' ')
 
     if not members:
         await callback.message.delete()
-        await callback.message.answer('Нет нихуя')
-    await callback.message.answer(members)
+        await callback.message.answer('Пусто')
+    await callback.message.answer("Участники: \n" + '\n  ' + members + '\nВсего участников - ' + howmany)
 
 @dp.callback_query_handler(text='add_new_member')
 async def cb_reg_new_user(callback: types.CallbackQuery) -> None:

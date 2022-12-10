@@ -13,7 +13,7 @@ def get_start_ikb() -> InlineKeyboardMarkup:
 
 def get_start_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(keyboard=[
-        [InlineKeyboardButton('/account')]
+        [InlineKeyboardButton('/start')]
     ], resize_keyboard=True)
 
     return kb

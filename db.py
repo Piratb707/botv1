@@ -12,7 +12,7 @@ async def db_connect() -> None:
 
 async def get_all_members():
 
-    members = cur.execute("SELECT * FROM tournament").fetchall()
+    members = cur.execute("SELECT nlogin FROM tournament").fetchall()
 
     return members
 
