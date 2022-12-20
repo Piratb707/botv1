@@ -7,6 +7,13 @@ from keyboards import get_start_ikb, members_cb, get_start_kb, get_cancel_kb
 from config import TOKEN
 import db 
 
+HELLO_MESSAGE = """
+Добро пожаловать ! \nДля регистрации нажми на /account и выбери <b>"Регистрация на турнир"
+</b>.\nДля просмотра списка участников выбери <b>"Просмотр участников"</b>
+.\nЕсли вам нужна инструкция по подключению нажми на /connect.\nТак же можно поддержать нас 
+<b>донатом</b> /donate .
+"""
+
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot,storage=storage)
@@ -22,14 +29,14 @@ async def on_startup(_):
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     await bot.send_message(chat_id=message.from_user.id,
-                            text="""Добро пожаловать ! \nДля регистрации нажми на /account и выбери <b>"Регистрация на турнир"</b>.\nДля просмотра списка участников выбери <b>"Просмотр участников"</b>.\nЕсли вам нужна инструкция по подключению нажми на /connect.\nТак же можно поддержать нас <b>донатом</b> /donate""", parse_mode="html",
+                            text=HELLO_MESSAGE, parse_mode="html",
                             reply_markup=get_start_kb())
 
 
 @dp.message_handler(commands=['connect'])
 async def cmd_connenct(message: types.Message):
     await bot.send_message(chat_id=message.from_user.id,
-                            text='Для начала тебе необходимо скачать клиент по ссылке https://clck.ru/32v9fV , и следую инструкциям подключится к серверу (инструкциии) ')
+                            text='Для начала тебе необходимо скачать клиент по ссылке https://clck.ru/32v9fV , далее вам необходимо добавить в игре в избранное сервер с адресом 109.248.250.45')
 
 @dp.message_handler(commands=['donate'])
 async def cmd_donate(message: types.Message):
